@@ -107,7 +107,9 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 
-LOGIN_URL = reverse_lazy("login")
+LOGIN_URL = reverse_lazy("social:login")
+LOGOUT_URL = reverse_lazy("social:logout")
+LOGIN_REDIRECT_URL = reverse_lazy("social:dashboard")
 
 # Internationalization
 # https://docs.djangoproject.com/en/4.1/topics/i18n/
