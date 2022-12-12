@@ -110,10 +110,17 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_HOST = env("EMAIL_HOST")
+EMAIL_HOST_USER = env("EMAIL_HOST_USER")
+EMAIL_HOST_PASSWORD = env("EMAIL_HOST_PASSWORD")
+EMAIL_PORT = env("EMAIL_PORT")
+EMAIL_USE_TLS = env("EMAIL_USE_TLS")
 
-LOGIN_URL = reverse_lazy("social:login")
-LOGOUT_URL = reverse_lazy("social:logout")
-LOGIN_REDIRECT_URL = reverse_lazy("social:dashboard")
+
+LOGIN_URL = "login"
+LOGOUT_URL = "logout"
+LOGIN_REDIRECT_URL = reverse_lazy("dashboard")
 
 # Internationalization
 # https://docs.djangoproject.com/en/4.1/topics/i18n/
