@@ -9,9 +9,3 @@ class ModelMixinTestCase(TestCase):
             "password": "123",
         }
         User.objects.create_user(**self.credentials)
-
-    def logIn(self):
-        self.client.login(**self.credentials)
-
-    def logOut(self):
-        self.client.logout
