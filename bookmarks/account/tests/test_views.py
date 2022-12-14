@@ -65,7 +65,7 @@ class TestRegisterView(TestCase):
         )
         self.assertTemplateUsed(response, "account/register.html")
 
-    def test_register_view_redirects_to_correct_template_after_successful_registration(
+    def test_register_view_redirects_to_success_view_after_successful_registration(
         self,
     ):
         response = self.client.post(
