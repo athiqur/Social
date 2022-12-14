@@ -13,7 +13,7 @@ class TestUserLogin(ModelMixinTestCase, TestCase):
         self,
     ):
         self.client.login(**self.credentials)
-        response = self.client.get(reverse("social:dashboard"), follow=True)
+        response = self.client.get(reverse("dashboard"), follow=True)
         self.assertTemplateUsed(response, "account/dashboard.html")
 
 
@@ -29,7 +29,7 @@ class TestLogoutView(ModelMixinTestCase, TestCase):
     ):
         self.client.login(**self.credentials)
         self.client.logout
-        response = self.client.get(reverse("social:dashboard"), follow=True)
+        response = self.client.get(reverse("dashboard"), follow=True)
         self.assertTemplateUsed(response, "account/dashboard.html")
 
 
