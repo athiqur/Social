@@ -9,4 +9,5 @@ urlpatterns = [
     path(
         "success/", views.registeration_success, name="registeration_success"
     ),
+    path("edit/", views.edit, name="edit"),
 ]
