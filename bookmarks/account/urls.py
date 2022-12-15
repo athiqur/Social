@@ -10,4 +10,5 @@ urlpatterns = [
         "success/", views.registeration_success, name="registeration_success"
     ),
     path("edit/", views.edit, name="edit"),
+    path("social-auth/", include("social_django.urls", namespace="social")),
 ]
