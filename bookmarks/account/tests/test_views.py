@@ -65,7 +65,7 @@ class TestRegisterView(TestCase):
         )
         self.assertTemplateUsed(response, "account/register.html")
 
-    def test_register_view_redirects_to_success_view_after_successful_registration(
+    def test_register_view_uses_success_view_after_successful_registration(
         self,
     ):
         response = self.client.post(
@@ -78,4 +78,17 @@ class TestRegisterView(TestCase):
                 "password2": "123",
             },
         )
-        self.assertRedirects(response, reverse("registeration_success"))
+        self.assertTemplateUsed(response, "account/register_done.html")
+
+    def test_edit_view_uses_success_view_after_editing(self):
+        response = self.client.post(
+            reverse("register"),
+            {
+                "username": "athiqur@gmail.com",
+                "first_name": "athiqur",
+                "email": "athiqurking@gmail.com",
+                "password": "123",
+                "password2": "123",
+            },
+        )
+        self.assertTemplateUsed(response, "account/register_done.html")
