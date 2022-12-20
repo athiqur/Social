@@ -40,6 +40,7 @@ ALLOWED_HOSTS = ["mysite.com", "localhost", "127.0.0.1"]
 # Application definition
 
 INSTALLED_APPS = [
+    "easy_thumbnails",
     "images.apps.ImagesConfig",
     "account.apps.AccountConfig",
     "social_django",
