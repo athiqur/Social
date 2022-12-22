@@ -19,9 +19,11 @@ class TestDetailView(ModelMixin, TestCase):
         )
         self.assertEquals(response.status_code, 404)
 
-
+        
 class TestImageLikeView(ModelMixin, TestCase):
-    def test_image_like_view_succeeds_adding_like_to_the_image(self):
+    def test_image_like_view_succeeds_adding_like_to_the_image_when_called_with_ajax(
+        self,
+    ):
         self.client.login(**self.credentials)
         self.client.get(
             reverse(
@@ -29,13 +31,15 @@ class TestImageLikeView(ModelMixin, TestCase):
                 args=[self.image.pk, self.image.slug],
             )
         )
-        self.client.post(
+        response = self.client.post(
             reverse("images:like"),
-            {"id": Image.objects.first().pk, "action": "like"},
+            {"id": self.image.pk, "action": "like"},
+            **{"HTTP_X_REQUESTED_WITH": "XMLHttpRequest"}
         )
-        self.assertIsNotNone(self.image.users_like.first())
+        self.assertJSONEqual(response.content, {"status": "ok"})
 
-    def test_image_like_view_returns_status_error_for_invalid_action(self):
+
+    def test_image_like_view_fails_when_the_action_is_invalid(self):
         self.client.login(**self.credentials)
         self.client.get(
             reverse(
@@ -46,10 +50,13 @@ class TestImageLikeView(ModelMixin, TestCase):
         response = self.client.post(
             reverse("images:like"),
             {"id": self.image.pk, "action": "None"},
+            **{"HTTP_X_REQUESTED_WITH": "XMLHttpRequest"}
         )
         self.assertJSONEqual(response.content, {"status": "error"})
 
-    def test_image_like_view_succeeds_removing_like_from_the_image(self):
+    def test_image_like_view_succeeds_removing_like_from_the_image_when_called_with_ajax(
+        self,
+    ):
         self.client.login(**self.credentials)
         self.client.get(
             reverse(
@@ -59,10 +66,12 @@ class TestImageLikeView(ModelMixin, TestCase):
         )
         self.client.post(
             reverse("images:like"),
-            {"id": Image.objects.first().pk, "action": "like"},
+            {"id": self.image.pk, "action": "like"},
+            **{"HTTP_X_REQUESTED_WITH": "XMLHttpRequest"}
         )
-        self.client.post(
+        response = self.client.post(
             reverse("images:like"),
-            {"id": Image.objects.first().pk, "action": "unlike"},
+            {"id": self.image.pk, "action": "unlike"},
+            **{"HTTP_X_REQUESTED_WITH": "XMLHttpRequest"}
         )
-        self.assertIsNone(self.image.users_like.first())
+        self.assertJSONEqual(response.content, {"status": "ok"})
