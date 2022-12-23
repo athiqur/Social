@@ -11,4 +11,5 @@ urlpatterns = [
     ),
     path("edit/", views.edit, name="edit"),
     path("social-auth/", include("social_django.urls", namespace="social")),
+    path("users/", views.user_list, name="user_list"),
 ]
