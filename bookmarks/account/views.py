@@ -7,6 +7,9 @@ from .models import Profile
 from django.contrib import messages
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.models import User
+from django.views.generic.list import ListView
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.urls import reverse_lazy
 
 
 @login_required
@@ -64,11 +67,8 @@ def registeration_success(request):
     return render(request, "account/register_done.html")
 
 
-@login_required
-def user_list(request):
-    users = User.objects.filter(is_active=True)
-    return render(
-        request,
-        "account/user/list.html",
-        {"section": "people", "users": users},
-    )
+class UserListView(LoginRequiredMixin, ListView):
+    login_url = "account/login"
+    queryset = User.objects.filter(is_active=True)
+    template_name = "account/user/list.html"
+    context_object_name = "users"
