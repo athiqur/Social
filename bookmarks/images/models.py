@@ -22,7 +22,7 @@ class Image(models.Model):
     def save(self, *args, **kwargs):
         if not self.slug:
             self.slug = slugify(self.title)
-            super().save(*args, **kwargs)
+        super().save(*args, **kwargs)
 
     users_like = models.ManyToManyField(
         settings.AUTH_USER_MODEL, related_name="images_liked", blank=True
