@@ -92,3 +92,12 @@ class TestRegisterView(TestCase):
             },
         )
         self.assertTemplateUsed(response, "account/register_done.html")
+
+
+class UserListView(ModelMixinTestCase, TestCase):
+    def test_template_used_with_user_list_view(self):
+
+        self.client.login(username="john", password="johnpassword")
+        response = self.client.get(reverse("user_list"))
+
+        self.assertTemplateUsed(response, "account/user/list.html")
