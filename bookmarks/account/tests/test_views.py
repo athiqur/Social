@@ -101,3 +101,56 @@ class UserListView(ModelMixinTestCase, TestCase):
         response = self.client.get(reverse("user_list"))
 
         self.assertTemplateUsed(response, "account/user/list.html")
+
+
+class UserDetailView(ModelMixinTestCase, TestCase):
+    def test_detail_view_returns_success_view_for_the_valid_user(self):
+
+        self.client.login(**self.credentials)
+        response = self.client.get(reverse("user_detail", args=[self.user]))
+
+        self.assertTemplateUsed(response, "account/user/detail.html")
+
+    def test_detail_view_returns_404_for_invalid_user(self):
+
+        self.client.login(**self.credentials)
+        response = self.client.get(
+            reverse("user_detail", args=["invalid-user"])
+        )
+
+        self.assertEqual(response.status_code, 404)
+
+
+class UserFollowView(ModelMixinTestCase, TestCase):
+    def test_user_follow_succeeds_follow_when_the_request_is_ajax(self):
+        self.client.login(**self.credentials)
+        self.client.get(reverse("user_detail", args=[self.user.username]))
+        response = self.client.post(
+            reverse("images:like"),
+            {"id": self.image.pk, "action": "follow"},
+            **{"HTTP_X_REQUESTED_WITH": "XMLHttpRequest"}
+        )
+        self.assertJSONEqual(response.content, {"status": "ok"})
+
+    def test_user_follow_succeeds_unfollow_when_the_request_is_ajax(self):
+        self.client.login(**self.credentials)
+        self.client.get(reverse("user_detail", args=[self.user.username]))
+        response = self.client.post(
+            reverse("images:like"),
+            {"id": self.image.pk, "action": "unfollow"},
+            **{"HTTP_X_REQUESTED_WITH": "XMLHttpRequest"}
+        )
+        self.assertJSONEqual(response.content, {"status": "ok"})
+
+    def test_user_follow_returns_status_error_when_the_action_is_invalid(self):
+        self.client.login(**self.credentials)
+        self.client.get(reverse("user_detail", args=[self.user.username]))
+        response = self.client.post(
+            reverse("images:like"),
+            {
+                "id": self.image.pk,
+                "action": "actionum venaam reactionum venaam",
+            },
+            **{"HTTP_X_REQUESTED_WITH": "XMLHttpRequest"}
+        )
+        self.assertJSONEqual(response.content, {"status": "error"})
