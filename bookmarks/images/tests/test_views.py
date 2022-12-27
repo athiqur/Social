@@ -4,7 +4,6 @@ from django.urls import reverse
 from images.models import Image
 
 
-
 class TestDetailView(ModelMixin, TestCase):
     def test_detail_view_returns_to_success_view(self):
         self.client.login(**self.credentials)
