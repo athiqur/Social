@@ -10,6 +10,10 @@ from django.contrib.auth.models import User
 from django.views.generic.list import ListView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
+from django.http import JsonResponse, response
+from django.views.decorators.http import require_POST
+from common.decorators import ajax_required
+from .models import Contact
 
 
 @login_required
@@ -84,3 +88,26 @@ def user_detail(request, username):
     )
 
 
+@ajax_required
+@require_POST
+@login_required
+def user_follow(request):
+    user_id = request.POST.get("id")
+    action = request.POST.get("action")
+    if user_id and action:
+        try:
+            user = User.objects.get(id=user_id)
+            if action == "follow":
+                Contact.objects.get_or_create(
+                    user_from=request.user, user_to=user
+                )
+            else:
+                Contact.objects.filter(
+                    user_from=request.user, user_to=user
+                ).delete()
+            return JsonResponse({"status": "ok"})
+
+        except User.DoesNotExist:
+            return JsonResponse({"status": "error"})
+
+    return JsonResponse({"status": "error"})
