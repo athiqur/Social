@@ -122,33 +122,40 @@ class UserDetailView(ModelMixinTestCase, TestCase):
 
 
 class UserFollowView(ModelMixinTestCase, TestCase):
-    def test_user_follow_succeeds_follow_when_the_request_is_ajax(self):
+    def test_user_follow_view_succeeds_follow_when_the_request_is_ajax(self):
         self.client.login(**self.credentials)
         self.client.get(reverse("user_detail", args=[self.user.username]))
         response = self.client.post(
-            reverse("images:like"),
-            {"id": self.image.pk, "action": "follow"},
+            reverse("user_follow"),
+            {"id": self.user.pk, "action": "follow"},
             **{"HTTP_X_REQUESTED_WITH": "XMLHttpRequest"}
         )
         self.assertJSONEqual(response.content, {"status": "ok"})
 
-    def test_user_follow_succeeds_unfollow_when_the_request_is_ajax(self):
+    def test_user_follow_view_succeeds_unfollow_when_the_request_is_ajax(self):
         self.client.login(**self.credentials)
         self.client.get(reverse("user_detail", args=[self.user.username]))
+        self.client.post(
+            reverse("user_follow"),
+            {"id": self.user.pk, "action": "follow"},
+            **{"HTTP_X_REQUESTED_WITH": "XMLHttpRequest"}
+        )
         response = self.client.post(
-            reverse("images:like"),
-            {"id": self.image.pk, "action": "unfollow"},
+            reverse("user_follow"),
+            {"id": self.user.pk, "action": "unfollow"},
             **{"HTTP_X_REQUESTED_WITH": "XMLHttpRequest"}
         )
         self.assertJSONEqual(response.content, {"status": "ok"})
 
-    def test_user_follow_returns_status_error_when_the_action_is_invalid(self):
+    def test_user_follow_view_returns_status_error_when_the_action_is_invalid(
+        self,
+    ):
         self.client.login(**self.credentials)
         self.client.get(reverse("user_detail", args=[self.user.username]))
         response = self.client.post(
-            reverse("images:like"),
+            reverse("user_follow"),
             {
-                "id": self.image.pk,
+                "id": self.user.pk,
                 "action": "actionum venaam reactionum venaam",
             },
             **{"HTTP_X_REQUESTED_WITH": "XMLHttpRequest"}
