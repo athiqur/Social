@@ -1,6 +1,10 @@
 from django.test import TestCase
 from images.tests.test_modelmixin import ModelMixin
 from django.urls import reverse
+from images.models import Image
+from images.views import redis_client
+import urllib.request
+from PIL import Image as img
 
 
 class TestDetailView(ModelMixin, TestCase):
@@ -92,3 +96,40 @@ class TestImageListView(ModelMixin, TestCase):
         self.client.login(**self.credentials)
         response = self.client.get(reverse("images:list"))
         self.assertTemplateUsed(response, "images/image/list.html")
+
+
+class TestImageRanking(ModelMixin, TestCase):
+    def test_image_ranking_view_displays_most_viewed_images_in_ascending_order(
+        self,
+    ):
+        self.client.login(**self.credentials)
+        least_viewed_image = Image.objects.create(
+            user=self.user,
+            title="test-first-image",
+            slug="test-first-image",
+            url="https://assets.vogue.in/photos/5f3a37acac1b7909f36d6814/2:3/w_1920,c_limit/Mahendra%20Singh%20Dhoni%20fun%20facts.jpg",
+            image="images/dhoni.jpg",
+        )
+        most_viewed_image = Image.objects.create(
+            user=self.user,
+            title="test-second-image",
+            slug="test-second-image",
+            url="https://assets.vogue.in/photos/5f3a37acac1b7909f36d6814/2:3/w_1920,c_limit/Mahendra%20Singh%20Dhoni%20fun%20facts.jpg",
+            image="images/virat.jpg",
+        )
+        redis_client.flushall()
+        self.view_image(
+            image_id=least_viewed_image.id,
+            image_slug=least_viewed_image.slug,
+            count=1,
+        )
+        self.view_image(
+            image_id=most_viewed_image.id,
+            image_slug=most_viewed_image.slug,
+            count=3,
+        )
+        response = self.client.get(reverse("images:ranking"))
+        self.assertQuerysetEqual(
+            response.context.get("most_viewed"),
+            [most_viewed_image, least_viewed_image],
+        )
