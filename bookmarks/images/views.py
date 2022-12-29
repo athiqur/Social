@@ -15,7 +15,7 @@ from django.conf import settings
 import redis
 
 
-r = redis.Redis(
+redis_client = redis.Redis(
     host=settings.REDIS_HOST, port=settings.REDIS_PORT, db=settings.REDIS_DB
 )
 
@@ -40,7 +40,8 @@ def image_create(request):
 
 def image_detail(request, id, slug):
     image = get_object_or_404(Image, id=id, slug=slug)
-    total_views = r.incr(f"image:{image.id}:views")
+    total_views = redis_client.incr(f"image:{image.id}:views")
+    redis_client.zincrby("image_ranking", 1, image.id)
     return render(
         request,
         "images/image/detail.html",
