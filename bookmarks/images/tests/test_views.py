@@ -15,6 +15,6 @@ class TestDetailView(ModelMixin, TestCase):
     def test_detail_view_returns_404_for_invalid_image(self):
         self.client.login(**self.credentials)
         response = self.client.get(
-            reverse("images:detail", args=[2, "image-illai"])
+            reverse("images:detail", args=[1000, "image-illai"])
         )
         self.assertEquals(response.status_code, 404)

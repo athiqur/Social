@@ -2,8 +2,6 @@ from django.test import TestCase
 from django.contrib.auth.models import User
 from account.models import Profile
 from images.models import Image
-import urllib.request
-from PIL import Image as img
 
 
 class ModelMixin(TestCase):
@@ -14,15 +12,10 @@ class ModelMixin(TestCase):
         }
         self.user = User.objects.create_user(**self.credentials)
         Profile.objects.create(user=self.user)
-        urllib.request.urlretrieve(
-            "https://assets.vogue.in/photos/5f3a37acac1b7909f36d6814/2:3/w_1920,c_limit/Mahendra%20Singh%20Dhoni%20fun%20facts.jpg",
-            "rehman.jpg",
-        )
-        img.open("rehman.jpg")
         self.image = Image.objects.create(
             user=self.user,
             title="rehman",
             slug="rehman",
             url="https://assets.vogue.in/photos/5f3a37acac1b7909f36d6814/2:3/w_1920,c_limit/Mahendra%20Singh%20Dhoni%20fun%20facts.jpg",
-            image="rehman.jpg",
+            image="images/rehman.jpg",
         )
