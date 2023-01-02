@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 from pathlib import Path
 from django.urls import reverse_lazy
 import environ
+import os
 
 env = environ.Env()
 environ.Env.read_env()
@@ -90,6 +91,10 @@ DATABASES = {
         "PORT": env("DATABASE_PORT"),
     }
 }
+
+
+MEDIA_URL = "/media/"
+MEDIA_ROOT = os.path.join(BASE_DIR, "media/")
 
 
 # Password validation
