@@ -9,11 +9,7 @@ from actions.tests.test_actionmixin import ActionMixinTestCase
 class TestActionView(ActionMixinTestCase, TestCase):
     def test_action_stream_succeeds_showing_in_dashboard(self):
         self.client.login(**self.credentials_1)
-        self.client.post(
-            reverse("images:like"),
-            {"id": self.user1.pk, "action": "like"},
-            **{"HTTP_X_REQUESTED_WITH": "XMLHttpRequest"}
-        )
+        self.image.users_like(self.user1)
         self.client.login(**self.credentials_2)
         dashboard_display = self.client.get(reverse("dashboard"))
         self.assertQuerysetEqual(
