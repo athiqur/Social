@@ -80,3 +80,16 @@ class ImageListView(ListView):
             if is_ajax(self.request)
             else "images/image/list.html"
         )
+
+
+@login_required
+def list_top_10_images(request):
+    image_ranking = redis_client.zrange("image_ranking", 0, -1, desc=True)[:10]
+    image_ranking_ids = [int(id) for id in image_ranking]
+    most_viewed = list(Image.objects.filter(id__in=image_ranking_ids))
+    most_viewed.sort(key=lambda x: image_ranking_ids.index(x.id))
+    return render(
+        request,
+        "images/image/ranking.html",
+        {"section": "images", "most_viewed": most_viewed},
+    )
