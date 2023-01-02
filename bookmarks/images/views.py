@@ -83,7 +83,7 @@ class ImageListView(ListView):
 
 
 @login_required
-def image_ranking(request):
+def list_top_10_images(request):
     image_ranking = redis_client.zrange("image_ranking", 0, -1, desc=True)[:10]
     image_ranking_ids = [int(id) for id in image_ranking]
     most_viewed = list(Image.objects.filter(id__in=image_ranking_ids))

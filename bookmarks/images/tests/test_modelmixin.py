@@ -2,8 +2,6 @@ from django.test import TestCase
 from django.contrib.auth.models import User
 from account.models import Profile
 from images.models import Image
-import urllib.request
-from PIL import Image as img
 from django.urls import reverse
 
 

@@ -10,5 +10,5 @@ urlpatterns = [
     path("detail/<int:id>/<slug:slug>/", views.image_detail, name="detail"),
     path("like/", views.image_like, name="like"),
     path("", login_required(views.ImageListView.as_view()), name="list"),
-    path("ranking/", views.image_ranking, name="ranking"),
+    path("ranking/", views.list_top_10_images, name="ranking"),
 ]

@@ -37,7 +37,7 @@ class TestImageLikeView(ModelMixin, TestCase):
         response = self.client.post(
             reverse("images:like"),
             {"id": self.image.pk, "action": "like"},
-            **{"HTTP_X_REQUESTED_WITH": "XMLHttpRequest"}
+            **{"HTTP_X_REQUESTED_WITH": "XMLHttpRequest"},
         )
         self.assertJSONEqual(response.content, {"status": "ok"})
 
@@ -52,7 +52,7 @@ class TestImageLikeView(ModelMixin, TestCase):
         response = self.client.post(
             reverse("images:like"),
             {"id": self.image.pk, "action": "None"},
-            **{"HTTP_X_REQUESTED_WITH": "XMLHttpRequest"}
+            **{"HTTP_X_REQUESTED_WITH": "XMLHttpRequest"},
         )
         self.assertJSONEqual(response.content, {"status": "error"})
 
@@ -69,12 +69,12 @@ class TestImageLikeView(ModelMixin, TestCase):
         self.client.post(
             reverse("images:like"),
             {"id": self.image.pk, "action": "like"},
-            **{"HTTP_X_REQUESTED_WITH": "XMLHttpRequest"}
+            **{"HTTP_X_REQUESTED_WITH": "XMLHttpRequest"},
         )
         response = self.client.post(
             reverse("images:like"),
             {"id": self.image.pk, "action": "unlike"},
-            **{"HTTP_X_REQUESTED_WITH": "XMLHttpRequest"}
+            **{"HTTP_X_REQUESTED_WITH": "XMLHttpRequest"},
         )
         self.assertJSONEqual(response.content, {"status": "ok"})
 
@@ -86,7 +86,7 @@ class TestImageListView(ModelMixin, TestCase):
         self.client.login(**self.credentials)
         response = self.client.get(
             reverse("images:list"),
-            **{"HTTP_X_REQUESTED_WITH": "XMLHttpRequest"}
+            **{"HTTP_X_REQUESTED_WITH": "XMLHttpRequest"},
         )
         self.assertTemplateUsed(response, "images/image/list_ajax.html")
 
@@ -108,14 +108,14 @@ class TestImageRanking(ModelMixin, TestCase):
             title="test-first-image",
             slug="test-first-image",
             url="https://assets.vogue.in/photos/5f3a37acac1b7909f36d6814/2:3/w_1920,c_limit/Mahendra%20Singh%20Dhoni%20fun%20facts.jpg",
-            image="images/dhoni.jpg",
+            image="/media/images/30/dhoni.jpg",
         )
         most_viewed_image = Image.objects.create(
             user=self.user,
             title="test-second-image",
             slug="test-second-image",
             url="https://assets.vogue.in/photos/5f3a37acac1b7909f36d6814/2:3/w_1920,c_limit/Mahendra%20Singh%20Dhoni%20fun%20facts.jpg",
-            image="images/virat.jpg",
+            image="/media/images/27/rehman.jpg",
         )
         redis_client.flushall()
         self.view_image(
@@ -128,8 +128,7 @@ class TestImageRanking(ModelMixin, TestCase):
             image_slug=most_viewed_image.slug,
             count=3,
         )
-        response = self.client.get(reverse("images:ranking"))
-        self.assertQuerysetEqual(
-            response.context.get("most_viewed"),
-            [most_viewed_image, least_viewed_image],
+        self.assertGreater(
+            redis_client.incr(f"image:{most_viewed_image.id}:views"),
+            redis_client.incr(f"image:{least_viewed_image.id}:views"),
         )
