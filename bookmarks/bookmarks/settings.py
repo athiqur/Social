@@ -11,6 +11,11 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 """
 
 from pathlib import Path
+from django.urls import reverse_lazy
+import environ
+
+env = environ.Env()
+environ.Env.read_env()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -78,10 +83,11 @@ WSGI_APPLICATION = "bookmarks.wsgi.application"
 
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.postgresql",
-        "NAME": "socialmedia",
-        "USER": "socialmedia",
-        "PASSWORD": "123",
+        "ENGINE": env("DATABASE_ENGINE"),
+        "NAME": env("DATABASE_NAME"),
+        "USER": env("DATABASE_USER"),
+        "PASSWORD": env("DATABASE_PASSWORD"),
+        "PORT": env("DATABASE_PORT"),
     }
 }
 
@@ -104,6 +110,8 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+
+LOGIN_URL = reverse_lazy("login")
 
 # Internationalization
 # https://docs.djangoproject.com/en/4.1/topics/i18n/
