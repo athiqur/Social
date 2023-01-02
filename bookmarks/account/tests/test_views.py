@@ -1,5 +1,5 @@
 from django.test import TestCase
-from django.urls import reverse
+from django.urls import reverse, reverse_lazy
 from account.tests.test_modelmixintestcase import ModelMixinTestCase
 
 
@@ -47,3 +47,35 @@ class TestPasswordChangeView(ModelMixinTestCase, TestCase):
             self.client.get(reverse("password_change_done")),
             "registration/password_change_done.html",
         )
+
+
+class TestRegisterView(TestCase):
+    def test_register_view_uses_correct_template_for_unsuccessful_registration(
+        self,
+    ):
+        response = self.client.get(
+            reverse("register"),
+            {
+                "username": "athiqur@gmail.com",
+                "first_name": "athiqur",
+                "email": "athiqurking@gmail.com",
+                "password": "123",
+                "password2": "123",
+            },
+        )
+        self.assertTemplateUsed(response, "account/register.html")
+
+    def test_register_view_redirects_to_success_view_after_successful_registration(
+        self,
+    ):
+        response = self.client.post(
+            reverse("register"),
+            {
+                "username": "athiqur@gmail.com",
+                "first_name": "athiqur",
+                "email": "athiqurking@gmail.com",
+                "password": "123",
+                "password2": "123",
+            },
+        )
+        self.assertRedirects(response, reverse("registeration_success"))
