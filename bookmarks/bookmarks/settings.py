@@ -39,6 +39,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    "easy_thumbnails",
     "images.apps.ImagesConfig",
     "account.apps.AccountConfig",
     "social_django",
