@@ -23,6 +23,9 @@ class Image(models.Model):
     def get_absolute_url(self):
         return reverse("images:detail", args=[self.id, self.slug])
 
+    class Meta:
+        ordering = ["-id"]
+
     def __str__(self):
         return self.title
 
@@ -30,5 +33,3 @@ class Image(models.Model):
         if not self.slug:
             self.slug = slugify(self.title)
         super().save(*args, **kwargs)
-
-

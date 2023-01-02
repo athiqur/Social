@@ -6,7 +6,10 @@ from django.shortcuts import get_object_or_404
 from .models import Image
 from django.http import JsonResponse
 from django.views.decorators.http import require_POST
-from common.decorators import ajax_required
+from common.decorators import ajax_required, is_ajax
+from django.http import HttpResponse
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.views.generic import ListView
 
 
 @login_required
@@ -52,3 +55,16 @@ def image_like(request):
     except Exception:
         pass
     return JsonResponse({"status": "error"})
+
+
+class ImageListView(ListView):
+    model = Image
+    paginate_by = 6
+    context_object_name = "images"
+
+    def get_template_names(self):
+        return (
+            "images/image/list_ajax.html"
+            if is_ajax(self.request)
+            else "images/image/list.html"
+        )
