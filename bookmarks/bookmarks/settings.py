@@ -39,6 +39,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    "actions.apps.ActionsConfig",
     "easy_thumbnails",
     "images.apps.ImagesConfig",
     "account.apps.AccountConfig",
