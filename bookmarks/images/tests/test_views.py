@@ -99,7 +99,7 @@ class TestImageListView(ModelMixin, TestCase):
 
 
 class TestImageRanking(ModelMixin, TestCase):
-    def test_image_ranking_view_displays_most_viewed_images_in_ascending_order(
+    def test_image_ranking_view_displays_most_viewed_images_in_descending_order(
         self,
     ):
         self.client.login(**self.credentials)
