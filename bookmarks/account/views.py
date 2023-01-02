@@ -23,10 +23,11 @@ def dashboard(request):
     actions = Action.objects.exclude(user=request.user)
     following_ids = request.user.following.values_list("id", flat=True)
     if following_ids:
-        actions = actions.filter(user_id__in=following_ids)
-        actions = actions.select_related(
-            "user", "user__profile"
-        ).prefetch_related("target")[:10]
+        actions = (
+            actions.filter(user_id__in=following_ids)
+            .select_related("user", "user__profile")
+            .prefetch_related("target")[:10]
+        )
     return render(
         request,
         "account/dashboard.html",
@@ -90,8 +91,6 @@ class UserListView(LoginRequiredMixin, ListView):
     queryset = User.objects.filter(is_active=True)
     template_name = "account/user/list.html"
     context_object_name = "users"
-<<<<<<< HEAD
-=======
 
 
 @login_required
@@ -126,4 +125,3 @@ def user_follow(request):
         return JsonResponse({"status": "error"})
 
     return JsonResponse({"status": "error"})
->>>>>>> 297a7e6 (Add support to follow users using ajax)
