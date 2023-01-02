@@ -1,6 +1,8 @@
 from django.test import TestCase
 from images.tests.test_modelmixin import ModelMixin
 from django.urls import reverse
+from images.models import Image
+
 
 class TestDetailView(ModelMixin, TestCase):
     def test_detail_view_returns_to_success_view(self):
@@ -27,7 +29,10 @@ class TestImageLikeView(ModelMixin, TestCase):
                 args=[self.image.pk, self.image.slug],
             )
         )
-        self.image.users_like.add(self.user)
+        self.client.post(
+            reverse("images:like"),
+            {"id": Image.objects.first().pk, "action": "like"},
+        )
         self.assertIsNotNone(self.image.users_like.first())
 
     def test_image_like_view_returns_status_error_for_invalid_action(self):
@@ -52,6 +57,12 @@ class TestImageLikeView(ModelMixin, TestCase):
                 args=[self.image.pk, self.image.slug],
             )
         )
-        self.image.users_like.add(self.user)
-        self.image.users_like.remove(self.user)
+        self.client.post(
+            reverse("images:like"),
+            {"id": Image.objects.first().pk, "action": "like"},
+        )
+        self.client.post(
+            reverse("images:like"),
+            {"id": Image.objects.first().pk, "action": "unlike"},
+        )
         self.assertIsNone(self.image.users_like.first())
