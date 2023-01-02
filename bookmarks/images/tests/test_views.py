@@ -18,3 +18,51 @@ class TestDetailView(ModelMixin, TestCase):
             reverse("images:detail", args=[1000, "image-illai"])
         )
         self.assertEquals(response.status_code, 404)
+
+
+class TestImageLikeView(ModelMixin, TestCase):
+    def test_image_like_view_succeeds_adding_like_to_the_image(self):
+        self.client.login(**self.credentials)
+        self.client.get(
+            reverse(
+                "images:detail",
+                args=[self.image.pk, self.image.slug],
+            )
+        )
+        self.client.post(
+            reverse("images:like"),
+            {"id": Image.objects.first().pk, "action": "like"},
+        )
+        self.assertIsNotNone(self.image.users_like.first())
+
+    def test_image_like_view_returns_status_error_for_invalid_action(self):
+        self.client.login(**self.credentials)
+        self.client.get(
+            reverse(
+                "images:detail",
+                args=[self.image.pk, self.image.slug],
+            )
+        )
+        response = self.client.post(
+            reverse("images:like"),
+            {"id": self.image.pk, "action": "None"},
+        )
+        self.assertJSONEqual(response.content, {"status": "error"})
+
+    def test_image_like_view_succeeds_removing_like_from_the_image(self):
+        self.client.login(**self.credentials)
+        self.client.get(
+            reverse(
+                "images:detail",
+                args=[self.image.pk, self.image.slug],
+            )
+        )
+        self.client.post(
+            reverse("images:like"),
+            {"id": Image.objects.first().pk, "action": "like"},
+        )
+        self.client.post(
+            reverse("images:like"),
+            {"id": Image.objects.first().pk, "action": "unlike"},
+        )
+        self.assertIsNone(self.image.users_like.first())
