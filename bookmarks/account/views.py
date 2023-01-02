@@ -5,6 +5,11 @@ from django.contrib.auth.decorators import login_required
 from .forms import UserRegistrationForm, UserEditForm, ProfileEditForm
 from .models import Profile
 from django.contrib import messages
+from django.shortcuts import get_object_or_404
+from django.contrib.auth.models import User
+from django.views.generic.list import ListView
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.urls import reverse_lazy
 
 
 @login_required
@@ -60,3 +65,10 @@ def edit(request):
 
 def registeration_success(request):
     return render(request, "account/register_done.html")
+
+
+class UserListView(LoginRequiredMixin, ListView):
+    login_url = "account/login"
+    queryset = User.objects.filter(is_active=True)
+    template_name = "account/user/list.html"
+    context_object_name = "users"
