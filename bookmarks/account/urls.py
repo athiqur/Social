@@ -12,4 +12,6 @@ urlpatterns = [
     path("edit/", views.edit, name="edit"),
     path("social-auth/", include("social_django.urls", namespace="social")),
     path("users/", views.UserListView.as_view(), name="user_list"),
+    path("users/<username>/", views.user_detail, name="user_detail"),
+    path("follow/", views.user_follow, name="user_follow"),
 ]
