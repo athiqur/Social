@@ -31,3 +31,19 @@ class TestLogoutView(ModelMixinTestCase, TestCase):
         self.client.logout
         response = self.client.get(reverse("social:dashboard"), follow=True)
         self.assertTemplateUsed(response, "account/dashboard.html")
+
+
+class TestPasswordChangeView(ModelMixinTestCase, TestCase):
+    def test_auth_password_change_view_uses_correct_template(self):
+        self.client.login(**self.credentials)
+        self.assertTemplateUsed(
+            self.client.get(reverse("social:password_change")),
+            "registration/password_change_form.html",
+        )
+
+    def test_auth_password_change_done_view_uses_correct_template(self):
+        self.client.login(**self.credentials)
+        self.assertTemplateUsed(
+            self.client.get(reverse("social:password_change_done")),
+            "registration/password_change_done.html",
+        )
