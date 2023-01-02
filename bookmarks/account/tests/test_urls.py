@@ -5,4 +5,4 @@ from account.views import dashboard
 
 class TestUrl(SimpleTestCase):
     def test_dashboard_url_is_resolved(self):
-        self.assertEquals(resolve(reverse("social:dashboard")).func, dashboard)
+        self.assertEquals(resolve(reverse("dashboard")).func, dashboard)
