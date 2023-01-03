@@ -27,6 +27,9 @@ class Image(models.Model):
     class Meta:
         ordering = ["-id"]
 
+    def get_absolute_url(self):
+        return reverse("images:detail", args=[self.id, self.slug])
+
     def __str__(self):
         return self.title
 
